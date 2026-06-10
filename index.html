@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scheidel Interactive — indie games & tools</title>
-<meta name="description" content="Solo-built games and tools. One developer, single-file builds, shipped from a kitchen table in Pennsylvania.">
+<meta name="description" content="Solo-built games and tools. One developer, single-file builds, shipped one commit at a time.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -132,7 +132,6 @@
 <div class="view active" id="view-home">
   <header class="hero">
     <div class="wrap hero-inner">
-      <div class="eyebrow"><span class="dot"></span>Solo dev studio &middot; Pennsylvania</div>
       <h1 class="logo"><span class="a">Scheidel</span><br><span class="b">Interactive</span></h1>
       <p class="tagline">One developer, no team, no engine bloat. <strong>Games and tools built single-file and shipped between drill weekends.</strong> Everything here is designed, coded, and published by one person.</p>
       <div class="hero-meta">
@@ -164,6 +163,7 @@
           <h4>Get in touch</h4>
           <a href="mailto:getarsenal.app@gmail.com">getarsenal.app@gmail.com</a>
           <a href="https://github.com/getarsenal" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.tiktok.com/@scheidel.interactive" target="_blank" rel="noopener">TikTok</a>
         </div>
         <div class="foot-col">
           <h4>Legal</h4>
@@ -181,7 +181,7 @@
     <div class="wrap">
       <div class="foot-grid">
         <div class="foot-col"><div class="foot-brand">Scheidel <span>Interactive</span></div></div>
-        <div class="foot-col"><h4>Get in touch</h4><a href="mailto:getarsenal.app@gmail.com">getarsenal.app@gmail.com</a></div>
+        <div class="foot-col"><h4>Get in touch</h4><a href="mailto:getarsenal.app@gmail.com">getarsenal.app@gmail.com</a><a href="https://www.tiktok.com/@scheidel.interactive" target="_blank" rel="noopener">TikTok</a></div>
         <div class="foot-col"><h4>Legal</h4><p>&copy; <span class="yr2"></span> Scheidel Holdings LLC</p></div>
       </div>
     </div>
@@ -219,7 +219,7 @@ const PROJECTS = [
     stack:["HTML5","JavaScript","Capacitor","Codemagic"],
     meta:[["Platform","iOS / Web"],["Status","Live"],["Engine","None - single-file"],["Year","2025"]],
     trailer:"", screenshots:[],
-    links:[{label:"App Store",url:"#",primary:true}]
+    links:[{label:"App Store",url:"https://apps.apple.com/us/app/leave-her-johnny/id6773430144",primary:true}]
   },
   {
     slug:"firebase", title:"FIREBASE", kind:"Game", type:"games",
@@ -234,7 +234,7 @@ const PROJECTS = [
     stack:["JavaScript","Canvas","HTML5"],
     meta:[["Platform","Web"],["Status","Live"],["Genre","Tower Defense"],["Year","2024"]],
     trailer:"", screenshots:[],
-    links:[{label:"Play now",url:"#",primary:true}]
+    links:[{label:"Play now",url:"https://getarsenal.github.io/firebase-game/",primary:true},{label:"Source",url:"https://github.com/getarsenal/firebase-game"}]
   },
   {
     slug:"colony-commander", title:"Colony Commander", kind:"Game", type:"games",
@@ -249,7 +249,22 @@ const PROJECTS = [
     stack:["Godot 4","GDScript"],
     meta:[["Platform","TBD"],["Status","In development"],["Engine","Godot 4"],["Target","2026"]],
     trailer:"", screenshots:[],
-    links:[{label:"Devlog soon",url:"#",disabled:true}]
+    links:[{label:"View on GitHub",url:"https://github.com/getarsenal/colony-commander",primary:true}]
+  },
+  {
+    slug:"dont-touch-my-boats", title:"Don't Touch My Boats", kind:"Game", type:"games",
+    status:"live", accent:"#b06bd8", logo:"",
+    blurb:"A satirical 3-D planet-assault game - space-themed WWI and WWII warships slugging it out in orbit.",
+    lead:"Take the fight to orbit: a story-driven campaign of space battles between reimagined WWI and WWII warships.",
+    story:[
+      "Don't Touch My Boats is a satirical 3-D planet-assault game with a full storyline, scripted enemy engagements, and large-scale space battles. The fleets are space-themed reimaginings of World War I and World War II warships - pulled out of the water and dropped into orbit.",
+      "It runs entirely in the browser with no install, and leans hard into its tone: equal parts naval-history homage and space-opera send-up."
+    ],
+    features:["3-D planet-assault combat","Story-driven campaign","Scripted enemy engagements","WWI/WWII warships reimagined in space"],
+    stack:["WebGL","JavaScript","HTML5"],
+    meta:[["Platform","Web"],["Status","Live"],["Genre","Action / Space"],["Year","2026"]],
+    trailer:"", screenshots:[],
+    links:[{label:"Play now",url:"https://getarsenal.app/Dont-Touch-My-Boats/",primary:true},{label:"Source",url:"https://github.com/getarsenal/Dont-Touch-My-Boats"}]
   },
   {
     slug:"arsenal", title:"ARSENAL", kind:"App", type:"tools",
@@ -258,13 +273,13 @@ const PROJECTS = [
     lead:"Know exactly what you own - and where every record lives.",
     story:[
       "ARSENAL is a firearm inventory management app for collectors. It pairs fast barcode scanning with a clean dark interface and keeps records secure and organized.",
-      "It shipped to both the App Store and Google Play under Scheidel Holdings LLC, navigating real platform review on both sides - subscription disclosure, IAP setup, and a Kotlin scanner-plugin migration on Android."
+      "It shipped to the App Store under Scheidel Holdings LLC, navigating real platform review - subscription disclosure and IAP setup. An Android build (with a Kotlin scanner-plugin migration) is in the works for Google Play."
     ],
-    features:["Barcode scanning for fast entry","Secure inventory records","Dark, focused interface","iOS and Android"],
+    features:["Barcode scanning for fast entry","Secure inventory records","Dark, focused interface","iOS (Android in the works)"],
     stack:["Capacitor","RevenueCat","ML Kit","HTML/JS"],
-    meta:[["Platform","iOS / Android"],["Status","Live"],["Monetization","RevenueCat"],["Year","2024"]],
+    meta:[["Platform","iOS"],["Status","Live"],["Monetization","RevenueCat"],["Year","2024"]],
     trailer:"", screenshots:[],
-    links:[{label:"App Store",url:"#",primary:true},{label:"Google Play",url:"#"}]
+    links:[{label:"App Store",url:"https://apps.apple.com/app/id6761271753",primary:true}]
   },
   {
     slug:"mission-tracker", title:"Mission Tracker", kind:"PWA", type:"tools",
@@ -294,7 +309,7 @@ const PROJECTS = [
     stack:["Web App","JavaScript"],
     meta:[["Platform","Web"],["Status","Beta"],["Audience","Small-unit NCOs"],["Year","2024"]],
     trailer:"", screenshots:[],
-    links:[{label:"Request access",url:"mailto:getarsenal.app@gmail.com?subject=Range%201%20access",primary:true}]
+    links:[{label:"Open tool",url:"https://getarsenal.github.io/Range1/",primary:true},{label:"Source",url:"https://github.com/getarsenal/Range1"}]
   }
 ];
 
