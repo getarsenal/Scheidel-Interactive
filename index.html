@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheidel Interactive — indie games & tools</title>
+<meta name="description" content="Solo-built games and tools. One developer, single-file builds, shipped from a kitchen table in Pennsylvania.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16110d; --bg-raised:#211913; --bg-sunk:#0f0b08;
+    --ink:#f3e9da; --ink-dim:#a8987f;
+    --ember:#ff6b35; --ember-deep:#c2410c; --brass:#e8b04b;
+    --grid:#2c211a; --live:#7bd88f; --beta:#e8b04b; --dev:#7aa2ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+  ::selection{background:var(--ember);color:#16110d}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px);mix-blend-mode:multiply;opacity:.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  img{display:block;max-width:100%}
+  .view{display:none}
+  .view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  header.hero{position:relative;padding:90px 0 70px;border-bottom:2px solid var(--grid);overflow:hidden}
+  header.hero::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(60% 80% at 80% -10%,rgba(255,107,53,.18),transparent 60%),radial-gradient(50% 60% at 0% 120%,rgba(232,176,75,.10),transparent 60%);pointer-events:none}
+  .hero-inner{position:relative;z-index:1}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ember);margin-bottom:22px;display:flex;align-items:center;gap:12px}
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 0 rgba(123,216,143,.7);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(123,216,143,.6)}70%{box-shadow:0 0 0 9px rgba(123,216,143,0)}100%{box-shadow:0 0 0 0 rgba(123,216,143,0)}}
+  h1.logo{font-family:'Bungee',sans-serif;font-size:clamp(2.6rem,8vw,5.4rem);line-height:.96;letter-spacing:-.01em;text-transform:uppercase}
+  h1.logo .a{color:var(--ink)}
+  h1.logo .b{color:var(--ember);text-shadow:4px 4px 0 var(--ember-deep)}
+  .tagline{margin-top:24px;max-width:560px;font-size:1.12rem;color:var(--ink-dim)}
+  .tagline strong{color:var(--ink);font-weight:500}
+  .hero-meta{margin-top:34px;display:flex;flex-wrap:wrap;gap:10px;font-family:'JetBrains Mono',monospace;font-size:.74rem}
+  .chip{border:1px solid var(--grid);background:var(--bg-raised);padding:7px 13px;border-radius:2px;color:var(--ink-dim);letter-spacing:.04em}
+  .chip b{color:var(--brass);font-weight:500}
+
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin:64px 0 28px}
+  .sec-head h2{font-family:'Bungee',sans-serif;font-size:1.5rem;text-transform:uppercase;letter-spacing:.02em}
+  .sec-head .rule{flex:1;height:2px;background:var(--grid)}
+  .sec-head .count{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--ember)}
+
+  .cabinet{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .card{position:relative;background:var(--bg-raised);border:1px solid var(--grid);border-radius:4px;padding:24px 22px 20px;overflow:hidden;cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;text-align:left;width:100%;font:inherit;color:inherit;display:block;text-decoration:none}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--ember));opacity:.85}
+  .card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--accent,var(--ember));box-shadow:0 14px 34px rgba(0,0,0,.45);outline:none}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .card-logo{width:46px;height:46px;border-radius:8px;object-fit:contain;background:var(--bg-sunk);border:1px solid var(--grid);padding:5px}
+  .card-logo.placeholder{display:flex;align-items:center;justify-content:center;font-family:'Bungee',sans-serif;font-size:1.1rem;color:var(--accent,var(--ember))}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;white-space:nowrap;border:1px solid currentColor}
+  .badge.live{color:var(--live)}.badge.beta{color:var(--beta)}.badge.dev{color:var(--dev)}
+  .card-kind{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);margin-top:16px}
+  .card h3{font-family:'Bungee',sans-serif;font-size:1.28rem;margin:4px 0 0;text-transform:uppercase;letter-spacing:.005em;color:var(--ink)}
+  .card p{margin-top:10px;font-size:.93rem;color:var(--ink-dim);min-height:60px}
+  .tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--ink-dim);border:1px solid var(--grid);padding:3px 8px;border-radius:2px}
+  .card-cta{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--accent,var(--ember));letter-spacing:.04em}
+  .card-cta::after{content:" \2192";transition:margin .15s ease}
+  .card:hover .card-cta::after{margin-left:4px}
+
+  .back{display:inline-flex;align-items:center;gap:8px;margin:36px 0 8px;font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.06em;color:var(--ink-dim);text-decoration:none;border:none;background:none;cursor:pointer}
+  .back:hover{color:var(--ember)}
+  .detail-head{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin:24px 0 8px}
+  .detail-logo{width:92px;height:92px;border-radius:14px;object-fit:contain;flex-shrink:0;background:var(--bg-sunk);border:1px solid var(--grid);padding:10px}
+  .detail-logo.placeholder{display:flex;align-items:center;justify-content:center;font-family:'Bungee',sans-serif;font-size:2rem;color:var(--d-accent,var(--ember))}
+  .detail-titles .d-kind{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim)}
+  .detail-titles h1{font-family:'Bungee',sans-serif;font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;line-height:1;margin:8px 0;color:var(--ink)}
+  .detail-actions{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 8px}
+  .btn{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;padding:12px 20px;border-radius:3px;background:var(--d-accent,var(--ember));color:var(--bg);transition:transform .15s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:none;color:var(--ink);border:1px solid var(--grid)}
+  .btn.ghost:hover{border-color:var(--d-accent,var(--ember))}
+  .btn.disabled{background:var(--bg-raised);color:var(--ink-dim);border:1px solid var(--grid);cursor:default}
+  .btn.disabled:hover{transform:none}
+
+  .d-layout{display:grid;grid-template-columns:1fr;gap:48px;margin:48px 0}
+  @media(min-width:840px){.d-layout{grid-template-columns:1.6fr 1fr}}
+  .d-block h3{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--d-accent,var(--ember));margin-bottom:16px}
+  .d-story p{font-size:1.05rem;color:var(--ink);margin-bottom:16px}
+  .d-story p.lead{font-size:1.2rem;color:var(--ink)}
+
+  .trailer{position:relative;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:1px solid var(--grid);background:var(--bg-sunk);margin-bottom:48px}
+  .trailer iframe{width:100%;height:100%;border:0}
+  .trailer-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.1em}
+  .trailer-placeholder .play{width:64px;height:64px;border-radius:50%;border:2px solid var(--d-accent,var(--ember));display:flex;align-items:center;justify-content:center;color:var(--d-accent,var(--ember));font-size:1.4rem}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .shot{aspect-ratio:9/16;border-radius:5px;overflow:hidden;border:1px solid var(--grid);background:var(--bg-sunk);cursor:pointer;transition:border-color .15s ease}
+  .shot.wide{aspect-ratio:16/9}
+  .shot:hover{border-color:var(--d-accent,var(--ember))}
+  .shot img{width:100%;height:100%;object-fit:cover}
+  .shot.placeholder{display:flex;align-items:center;justify-content:center;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;cursor:default;text-align:center}
+  .shot.placeholder:hover{border-color:var(--grid)}
+
+  .feature-list{list-style:none}
+  .feature-list li{position:relative;padding:10px 0 10px 26px;border-bottom:1px solid var(--grid);font-size:.96rem;color:var(--ink)}
+  .feature-list li::before{content:"\25B8";position:absolute;left:0;color:var(--d-accent,var(--ember))}
+  .stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .stack .tag{font-size:.7rem;padding:5px 10px}
+  .meta-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--grid);font-family:'JetBrains Mono',monospace;font-size:.8rem}
+  .meta-row .k{color:var(--ink-dim);letter-spacing:.06em}
+  .meta-row .v{color:var(--ink)}
+
+  .lightbox{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:30px;cursor:zoom-out}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:6px}
+
+  footer{margin-top:80px;border-top:2px solid var(--grid);padding:48px 0 60px}
+  .foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:30px}
+  .foot-brand{font-family:'Bungee',sans-serif;font-size:1.1rem;text-transform:uppercase}
+  .foot-brand span{color:var(--ember)}
+  .foot-col h4{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ember);margin-bottom:12px}
+  .foot-col a,.foot-col p{display:block;color:var(--ink-dim);text-decoration:none;font-size:.9rem;margin-bottom:6px}
+  .foot-col a:hover{color:var(--ink)}
+  .colophon{margin-top:38px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--ink-dim);letter-spacing:.03em;line-height:1.8}
+  .colophon .blink{color:var(--ember);animation:blink 1.2s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  @media(max-width:560px){.card p{min-height:0}header.hero{padding:64px 0 50px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="view active" id="view-home">
+  <header class="hero">
+    <div class="wrap hero-inner">
+      <div class="eyebrow"><span class="dot"></span>Solo dev studio &middot; Pennsylvania</div>
+      <h1 class="logo"><span class="a">Scheidel</span><br><span class="b">Interactive</span></h1>
+      <p class="tagline">One developer, no team, no engine bloat. <strong>Games and tools built single-file and shipped between drill weekends.</strong> Everything here is designed, coded, and published by one person.</p>
+      <div class="hero-meta">
+        <span class="chip"><b id="m-shipped">0</b> shipped</span>
+        <span class="chip"><b id="m-dev">0</b> in development</span>
+        <span class="chip"><b>1</b> developer</span>
+        <span class="chip">est. <b>2024</b></span>
+      </div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section>
+      <div class="sec-head"><h2>Games</h2><span class="rule"></span><span class="count" id="c-games"></span></div>
+      <div class="cabinet" id="grid-games"></div>
+    </section>
+    <section>
+      <div class="sec-head"><h2>Tools</h2><span class="rule"></span><span class="count" id="c-tools"></span></div>
+      <div class="cabinet" id="grid-tools"></div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col">
+          <div class="foot-brand">Scheidel <span>Interactive</span></div>
+          <p class="colophon">Built single-file. Hosted on the edge.<br>Shipped one commit at a time. <span class="blink">&#9646;</span></p>
+        </div>
+        <div class="foot-col">
+          <h4>Get in touch</h4>
+          <a href="mailto:getarsenal.app@gmail.com">getarsenal.app@gmail.com</a>
+          <a href="https://github.com/getarsenal" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <div class="foot-col">
+          <h4>Legal</h4>
+          <p>A Scheidel Holdings LLC brand</p>
+          <p>&copy; <span id="yr"></span> Scheidel Holdings LLC</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="view" id="view-detail">
+  <div class="wrap" id="detail-content"></div>
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-col"><div class="foot-brand">Scheidel <span>Interactive</span></div></div>
+        <div class="foot-col"><h4>Get in touch</h4><a href="mailto:getarsenal.app@gmail.com">getarsenal.app@gmail.com</a></div>
+        <div class="foot-col"><h4>Legal</h4><p>&copy; <span class="yr2"></span> Scheidel Holdings LLC</p></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+
+<script>
+/* ============================================================
+   PROJECT DATA - edit here to add / update projects.
+
+   logo:        path to logo file, e.g. "logos/arsenal.svg" (png or svg).
+                Leave "" to show a generated letter tile.
+   slug:        used in the URL hash (#arsenal). lowercase, no spaces.
+   trailer:     YouTube/Vimeo EMBED url, e.g.
+                "https://www.youtube.com/embed/VIDEO_ID". "" = placeholder.
+   screenshots: array of image paths, e.g. ["shots/arsenal-1.png", ...].
+                Append "::wide" to a path for a landscape shot.
+   features:    bullet list shown in the sidebar.
+   meta:        small key/value facts (platform, release, etc).
+   links:       buttons. {label,url,primary?,disabled?}
+   ============================================================ */
+const PROJECTS = [
+  {
+    slug:"leave-her-johnny", title:"Leave Her Johnny", kind:"Game", type:"games",
+    status:"live", accent:"#ff6b35", logo:"logos/leave-her-johnny.png",
+    blurb:"A pirate adventure built in HTML5 - sea shanties, salt, and a long voyage home.",
+    lead:"A hand-built pirate adventure where the sea is never on your side.",
+    story:[
+      "Leave Her Johnny is an HTML5 adventure named for the old capstan shanty sailors sang on the last day of a voyage. You crew a ship through storms, ports, and trouble, working the deck and the story toward home.",
+      "It started as an experiment in how much atmosphere you can pack into a single-file web build - no engine, no download, just open and play. It recently cleared the full App Store submission pipeline and shipped to iOS."
+    ],
+    features:["HTML5, runs in any browser","Packaged native for iOS via Capacitor","Shanty-driven atmosphere","Built and shipped solo"],
+    stack:["HTML5","JavaScript","Capacitor","Codemagic"],
+    meta:[["Platform","iOS / Web"],["Status","Live"],["Engine","None - single-file"],["Year","2025"]],
+    trailer:"", screenshots:[],
+    links:[{label:"App Store",url:"#",primary:true}]
+  },
+  {
+    slug:"firebase", title:"FIREBASE", kind:"Game", type:"games",
+    status:"live", accent:"#e8b04b", logo:"logos/firebase.svg",
+    blurb:"Browser-based artillery tower defense on a military map. Five gun platforms and a lot of incoming.",
+    lead:"Hold the line with five guns, a tight economy, and waves that don't quit.",
+    story:[
+      "FIREBASE is an artillery tower defense game rendered on a military-map aesthetic. You manage five distinct gun platforms and a wave economy - every shell costs something, and overcommitting early gets you overrun late.",
+      "It went through heavy debugging across multiple build sessions to get the wave pacing and economy to feel fair-but-brutal. Pure browser, no install."
+    ],
+    features:["Five distinct gun platforms","Wave-based economy management","Military-map visual style","Runs entirely in-browser"],
+    stack:["JavaScript","Canvas","HTML5"],
+    meta:[["Platform","Web"],["Status","Live"],["Genre","Tower Defense"],["Year","2024"]],
+    trailer:"", screenshots:[],
+    links:[{label:"Play now",url:"#",primary:true}]
+  },
+  {
+    slug:"colony-commander", title:"Colony Commander", kind:"Game", type:"games",
+    status:"dev", accent:"#7aa2ff", logo:"",
+    blurb:"An ant-colony strategy sim built in Godot 4 - trail-flow simulation and a full campaign.",
+    lead:"Command a colony: route the trails, run the harvest, survive the campaign.",
+    story:[
+      "Colony Commander is an ant-colony strategy sim in active development on Godot 4. The core is a trail-flow simulation feeding a harvest loop - you direct foragers, balance the colony, and push through a campaign of 24+ levels plus an endless mode with a properly tuned difficulty curve.",
+      "It's informed by player feedback on what makes the genre satisfying: the harvest loop has to feel alive, and the campaign has to last. Build is sequenced and underway."
+    ],
+    features:["Trail-flow colony simulation","Tuned harvest economy loop","24+ level campaign","Endless mode with scaling difficulty"],
+    stack:["Godot 4","GDScript"],
+    meta:[["Platform","TBD"],["Status","In development"],["Engine","Godot 4"],["Target","2026"]],
+    trailer:"", screenshots:[],
+    links:[{label:"Devlog soon",url:"#",disabled:true}]
+  },
+  {
+    slug:"arsenal", title:"ARSENAL", kind:"App", type:"tools",
+    status:"live", accent:"#ff6b35", logo:"logos/arsenal.svg",
+    blurb:"Firearm inventory management for collectors. Barcode scanning and secure local records.",
+    lead:"Know exactly what you own - and where every record lives.",
+    story:[
+      "ARSENAL is a firearm inventory management app for collectors. It pairs fast barcode scanning with a clean dark interface and keeps records secure and organized.",
+      "It shipped to both the App Store and Google Play under Scheidel Holdings LLC, navigating real platform review on both sides - subscription disclosure, IAP setup, and a Kotlin scanner-plugin migration on Android."
+    ],
+    features:["Barcode scanning for fast entry","Secure inventory records","Dark, focused interface","iOS and Android"],
+    stack:["Capacitor","RevenueCat","ML Kit","HTML/JS"],
+    meta:[["Platform","iOS / Android"],["Status","Live"],["Monetization","RevenueCat"],["Year","2024"]],
+    trailer:"", screenshots:[],
+    links:[{label:"App Store",url:"#",primary:true},{label:"Google Play",url:"#"}]
+  },
+  {
+    slug:"mission-tracker", title:"Mission Tracker", kind:"PWA", type:"tools",
+    status:"live", accent:"#7bd88f", logo:"logos/mission-tracker.svg",
+    blurb:"A gamified financial goal tracker - XP, levels, badges, and a forecast engine.",
+    lead:"Turn a money goal into a game you actually want to play.",
+    story:[
+      "Mission Tracker is a gamified financial goal tracker built as a PWA. It layers XP, levels, and badges over a serious forecasting engine - weighted-recent pace calculations, a sensitivity dial, and an insight-card engine that reads like advice.",
+      "Everything persists locally in the browser, so it runs anywhere with no account and no server."
+    ],
+    features:["XP, levels, and badges","Weighted-recent pace forecasting","Adjustable sensitivity dial","Insight-card engine","Local-only, no account"],
+    stack:["PWA","JavaScript","localStorage"],
+    meta:[["Platform","Web / PWA"],["Status","Live"],["Storage","On-device"],["Year","2024"]],
+    trailer:"", screenshots:[],
+    links:[{label:"Open app",url:"https://getarsenal.github.io/truck-life/",primary:true}]
+  },
+  {
+    slug:"range-1", title:"Range 1", kind:"Tool", type:"tools",
+    status:"beta", accent:"#e8b04b", logo:"",
+    blurb:"Grassroots ammo accountability for NCOs - audit overlays and balance reconciliation.",
+    lead:"Ammo accountability that survives contact with a real range day.",
+    story:[
+      "Range 1 is a grassroots ammo accountability web app built for NCOs. It uses weapon silhouettes, timestamped mid-range audit overlays, and a running balance reconciliation system so the numbers always tie out.",
+      "It was built from field experience - designed around how accountability actually happens on a range, not how a form thinks it should."
+    ],
+    features:["Weapon silhouette interface","Timestamped audit overlays","Running balance reconciliation","Built for field use"],
+    stack:["Web App","JavaScript"],
+    meta:[["Platform","Web"],["Status","Beta"],["Audience","Small-unit NCOs"],["Year","2024"]],
+    trailer:"", screenshots:[],
+    links:[{label:"Request access",url:"mailto:getarsenal.app@gmail.com?subject=Range%201%20access",primary:true}]
+  }
+];
+
+const STATUS_LABEL={live:"Live",beta:"Beta",dev:"In Dev"};
+const bySlug=Object.fromEntries(PROJECTS.map(p=>[p.slug,p]));
+
+function logoEl(p,cls){
+  if(p.logo) return '<img class="'+cls+'" src="'+p.logo+'" alt="'+p.title+' logo" onerror="this.outerHTML=\'<div class=\\\''+cls+' placeholder\\\'>'+p.title[0]+'</div>\'">';
+  return '<div class="'+cls+' placeholder">'+p.title[0]+'</div>';
+}
+
+function card(p){
+  return '<a class="card" href="#'+p.slug+'" style="--accent:'+p.accent+'">'
+    +'<div class="card-top">'+logoEl(p,"card-logo")+'<span class="badge '+p.status+'">'+STATUS_LABEL[p.status]+'</span></div>'
+    +'<div class="card-kind">'+p.kind+'</div>'
+    +'<h3>'+p.title+'</h3>'
+    +'<p>'+p.blurb+'</p>'
+    +'<div class="tags">'+p.stack.slice(0,3).map(t=>'<span class="tag">'+t+'</span>').join("")+'</div>'
+    +'<div class="card-cta">View project</div></a>';
+}
+
+function renderGrid(type,el){
+  const items=PROJECTS.filter(p=>p.type===type);
+  document.getElementById(el).innerHTML=items.map(card).join("");
+  return items.length;
+}
+
+function shotEl(s){
+  const wide=s.endsWith("::wide");
+  const src=wide?s.slice(0,-6):s;
+  return '<div class="shot'+(wide?' wide':'')+'" onclick="openLightbox(\''+src+'\')"><img src="'+src+'" alt="screenshot" loading="lazy"></div>';
+}
+
+function renderDetail(p){
+  const trailer = p.trailer
+    ? '<div class="trailer"><iframe src="'+p.trailer+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>'
+    : '<div class="trailer"><div class="trailer-placeholder"><div class="play">&#9658;</div>Trailer coming soon</div></div>';
+
+  const gallery = (p.screenshots&&p.screenshots.length)
+    ? '<div class="gallery">'+p.screenshots.map(shotEl).join("")+'</div>'
+    : '<div class="gallery"><div class="shot placeholder">Screens<br>coming soon</div><div class="shot placeholder">&mdash;</div><div class="shot placeholder">&mdash;</div></div>';
+
+  const actions = p.links.map(l=>{
+    if(l.disabled) return '<span class="btn disabled">'+l.label+'</span>';
+    const cls=l.primary?"btn":"btn ghost";
+    const ext=l.url.startsWith("http")?' target="_blank" rel="noopener"':'';
+    return '<a class="'+cls+'" href="'+l.url+'"'+ext+'>'+l.label+'</a>';
+  }).join("");
+
+  const story=[p.lead?'<p class="lead">'+p.lead+'</p>':""].concat(p.story.map(s=>'<p>'+s+'</p>')).join("");
+
+  document.getElementById("detail-content").innerHTML=
+    '<a class="back" href="#">&larr; All projects</a>'
+    +'<div class="detail-head" style="--d-accent:'+p.accent+'">'+logoEl(p,"detail-logo")
+    +'<div class="detail-titles"><div class="d-kind">'+p.kind+' &middot; '+STATUS_LABEL[p.status]+'</div><h1>'+p.title+'</h1></div></div>'
+    +'<div class="detail-actions" style="--d-accent:'+p.accent+'">'+actions+'</div>'
+    +'<div style="--d-accent:'+p.accent+'">'+trailer
+    +'<div class="d-layout"><div>'
+    +'<div class="d-block d-story"><h3>About</h3>'+story+'</div>'
+    +'<div class="d-block" style="margin-top:48px"><h3>Screens</h3>'+gallery+'</div></div>'
+    +'<aside>'
+    +'<div class="d-block"><h3>Features</h3><ul class="feature-list">'+p.features.map(f=>'<li>'+f+'</li>').join("")+'</ul></div>'
+    +'<div class="d-block" style="margin-top:36px"><h3>Built with</h3><div class="stack">'+p.stack.map(t=>'<span class="tag">'+t+'</span>').join("")+'</div></div>'
+    +'<div class="d-block" style="margin-top:36px"><h3>Details</h3>'+p.meta.map(m=>'<div class="meta-row"><span class="k">'+m[0]+'</span><span class="v">'+m[1]+'</span></div>').join("")+'</div>'
+    +'</aside></div></div>';
+}
+
+function openLightbox(src){
+  const lb=document.getElementById("lightbox");
+  lb.querySelector("img").src=src;
+  lb.classList.add("open");
+}
+document.getElementById("lightbox").addEventListener("click",e=>e.currentTarget.classList.remove("open"));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("lightbox").classList.remove("open")});
+
+function route(){
+  const slug=location.hash.replace(/^#/,"");
+  const home=document.getElementById("view-home");
+  const detail=document.getElementById("view-detail");
+  if(slug&&bySlug[slug]){
+    renderDetail(bySlug[slug]);
+    home.classList.remove("active");
+    detail.classList.add("active");
+    window.scrollTo(0,0);
+    document.title=bySlug[slug].title+" - Scheidel Interactive";
+  }else{
+    detail.classList.remove("active");
+    home.classList.add("active");
+    if(slug)location.replace("#");
+    document.title="Scheidel Interactive - indie games & tools";
+  }
+}
+window.addEventListener("hashchange",route);
+
+const nGames=renderGrid("games","grid-games");
+const nTools=renderGrid("tools","grid-tools");
+document.getElementById("c-games").textContent=String(nGames).padStart(2,"0");
+document.getElementById("c-tools").textContent=String(nTools).padStart(2,"0");
+document.getElementById("m-shipped").textContent=PROJECTS.filter(p=>p.status==="live").length;
+document.getElementById("m-dev").textContent=PROJECTS.filter(p=>p.status==="dev").length;
+const y=new Date().getFullYear();
+document.getElementById("yr").textContent=y;
+document.querySelectorAll(".yr2").forEach(e=>e.textContent=y);
+route();
+</script>
+</body>
+</html>
